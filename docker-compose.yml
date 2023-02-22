@@ -8,6 +8,8 @@ services:
     command: >
        bash -c "poetry run python src/manage.py runserver"
     restart: unless-stopped
+    depends_on:
+      - postgres
     env_file:
       - envs/.env
 
@@ -19,6 +21,10 @@ services:
       bash -c "poetry run python src/manage.py migrate"
     profiles:
       - migrate
+    depends_on:
+      - postgres
+    links:
+      - postgres
     env_file:
       - envs/.env
 
@@ -30,5 +36,25 @@ services:
       bash -c "poetry run python src/manage.py collectstatic --noinput --clear"
     profiles:
       - collectstatic
+    depends_on:
+      - postgres
+    links:
+      - postgres
     env_file:
       - envs/.env
+
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=psql_user
+      - POSTGRES_PASSWORD=psql_pass
+      - POSTGRES_DB=empha_booking
+
+
+volumes:
+  postgres_data:
