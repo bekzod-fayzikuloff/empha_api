@@ -40,6 +40,7 @@ djangorestframework = "^3.14.0"
 markdown = "^3.4.1"
 django-filter = "^22.1"
 python-dotenv = "^0.21.1"
+psycopg2-binary = "^2.9.5"
 
 
 [tool.poetry.group.dev.dependencies]
