@@ -39,6 +39,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 3rd party
+    "rest_framework",
+    "drf_spectacular",
+    "django_filters",
+    "drf_spectacular_sidecar",
+    # project_apps
+    "apps.api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [
@@ -87,6 +94,13 @@ DATABASES = {
 }
 
 
+#######
+# DRF #
+#######
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -127,3 +141,29 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+###############
+# DOCS_SCHEMA #
+###############
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Basic": {"type": "basic"},
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"},
+    }
+}
+
+DOCS_SCHEMA_TITLE = os.environ.get("DOCS_SCHEMA_TITLE", "Booking api")
+DOCS_SCHEMA_DESCRIPTION = os.environ.get("DOCS_SCHEMA_DESCRIPTION", "Hotel room booking")
+DOCS_SCHEMA_VERSION = os.environ.get("DOCS_SCHEMA_VERSION", "0.0.1")
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": DOCS_SCHEMA_TITLE,
+    "DESCRIPTION": DOCS_SCHEMA_DESCRIPTION,
+    "VERSION": DOCS_SCHEMA_VERSION,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+}
