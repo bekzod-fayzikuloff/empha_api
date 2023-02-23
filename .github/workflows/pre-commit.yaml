@@ -1,7 +1,6 @@
 name: pre-commit
 
 on:
-  commit:
   push:
     branches: [master]
 
