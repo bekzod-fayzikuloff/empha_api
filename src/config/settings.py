@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_filters",
     "drf_spectacular_sidecar",
+    "rest_framework_simplejwt",
     # project_apps
     "apps.api.apps.ApiConfig",
 ]
@@ -99,6 +100,7 @@ DATABASES = {
 #######
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
 }
 
 # Password validation

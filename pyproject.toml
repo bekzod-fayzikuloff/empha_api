@@ -42,6 +42,8 @@ django-filter = "^22.1"
 python-dotenv = "^0.21.1"
 psycopg2-binary = "^2.9.5"
 drf-spectacular = {extras = ["sidecar"], version = "^0.25.1"}
+django-dirtyfields = "^1.9.1"
+djangorestframework-simplejwt = {extras = ["crypto"], version = "^5.2.2"}
 
 
 [tool.poetry.group.dev.dependencies]
