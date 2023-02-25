@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from .models import Booking, Room
 
@@ -13,3 +14,12 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = "__all__"
+
+    def create(self, validated_data):
+        if validated_data["start"] > validated_data["finish"]:
+            raise ValidationError("Booking start date can't be later than booking finish date")
+        if Booking.objects.filter(
+            start__lte=validated_data["start"], finish__gte=validated_data["start"], room=validated_data["room"]
+        ).exists():
+            raise ValidationError("Room is booked")
+        return super().create(validated_data)
