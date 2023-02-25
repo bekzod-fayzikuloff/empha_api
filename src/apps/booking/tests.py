@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 
 from rest_framework import status
@@ -82,3 +83,24 @@ class RoomsAPITestCase(APITestCase):
 
         self.assertEqual(status.HTTP_200_OK, rooms_res.status_code)
         self.assertEqual(len(rooms_res_json), 2)
+
+
+class UnbookedAPITestCase(APITestCase):
+    def setUp(self) -> None:
+        for pk, cost, count in [(1, 2000.0, 2), (2, 2500.0, 3), (3, 2700.0, 3)]:
+            Room.objects.create(title=f"Room #{pk}", daily_cost=Decimal(cost), place_count=count)
+
+    def test_unbooked_without_timerange(self):
+        response = self.client.get("/api/rooms/unbooked/", format="json")
+
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        self.assertTrue("Request should have start and finish query params" in response.json())
+
+    def test_unbooked_with_timerange_no_exist_bookings(self):
+        start = datetime.date.today()
+        start_str = start.strftime("%Y-%m-%d")
+        finish_str = (start + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.client.get(f"/api/rooms/unbooked/?finish={finish_str}&start={start_str}", format="json")
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertTrue(len(response.json()), Room.objects.count())
