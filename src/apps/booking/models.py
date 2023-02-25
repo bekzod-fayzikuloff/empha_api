@@ -10,7 +10,6 @@ class Room(BaseModel):
     title = models.CharField("Title", max_length=120)
     daily_cost = models.DecimalField("Daily cost", max_digits=16, decimal_places=4)
     place_count = models.PositiveIntegerField("Place count")
-    is_busy = models.BooleanField("Is busy", default=False)
 
     class Meta:
         verbose_name = "Room"
@@ -29,6 +28,13 @@ class Booking(BaseModel):
     class Meta:
         verbose_name = "Booking"
         verbose_name_plural = "Bookings"
+        constraints = [
+            models.CheckConstraint(
+                check=(models.Q(finish__gt=models.F("start"))),
+                name="check_finish",
+                violation_error_message="Booking finish cant be before booking start.",
+            )
+        ]
 
     def __str__(self) -> str:
         return f"Booking [{self.room}] by {self.person.username}"
