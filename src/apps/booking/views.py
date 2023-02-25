@@ -1,4 +1,4 @@
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, viewsets
 from rest_framework.exceptions import ValidationError
@@ -96,7 +96,7 @@ class UnbookedViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             raise ValidationError("Request should have start and finish query params")
         start = parse_datetime_qs(start)
         finish = parse_datetime_qs(finish)
-        return Room.objects.exclude(booking__start__gte=start, booking__finish__lte=finish)
+        return Room.objects.exclude(Q(booking__start__lte=start) & Q(booking__finish__lte=finish))
 
 
 class BookingViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
