@@ -6,10 +6,12 @@ services:
       context: .
       dockerfile: Dockerfile
     command: >
-       bash -c "poetry run python src/manage.py runserver"
+       bash -c "poetry run python src/manage.py runserver 0.0.0.0:8000"
     restart: unless-stopped
     depends_on:
       - postgres
+    ports:
+      - "8000:8000"
     env_file:
       - envs/.env
 
