@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from .models import Booking, Room
+from .models import Room
 
 
 class RoomFilter(filters.FilterSet):
@@ -21,5 +21,5 @@ class UnbookedFilter(filters.FilterSet):
     finish = filters.DateTimeFilter(field_name="finish", lookup_expr="lte")
 
     class Meta:
-        model = Booking
+        model = Room
         fields = ("start", "finish")

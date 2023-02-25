@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from common.utils import parse_datetime_qs
+
 from .filters import RoomFilter, UnbookedFilter
 from .models import Booking, Room
 from .permissions import IsBookedByHimselfOrReadOnly
@@ -56,8 +58,8 @@ class RoomViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class UnbookedViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Booking.objects.all()
-    serializer_class = BookingSerializer
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
     filterset_class = UnbookedFilter
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -78,10 +80,7 @@ class UnbookedViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         _ : Response
             Unbooked rooms list endpoint response
         """
-        qs = self.get_queryset()
-        filtered_queryset: QuerySet = self.filter_queryset(qs)
-        queryset = qs.difference(filtered_queryset)
-
+        queryset: QuerySet = self.get_queryset()
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -95,7 +94,9 @@ class UnbookedViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         finish = self.request.query_params.get("finish")
         if not all((start, finish)):
             raise ValidationError("Request should have start and finish query params")
-        return Booking.objects.all()
+        start = parse_datetime_qs(start)
+        finish = parse_datetime_qs(finish)
+        return Room.objects.exclude(booking__start__gte=start, booking__finish__lte=finish)
 
 
 class BookingViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
