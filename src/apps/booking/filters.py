@@ -4,8 +4,6 @@ from .models import Room
 
 
 class RoomFilter(filters.FilterSet):
-    """Room filters class"""
-
     cost__gt = filters.NumberFilter(field_name="daily_cost", lookup_expr="gt")
     cost__lt = filters.NumberFilter(field_name="daily_cost", lookup_expr="lt")
 
@@ -15,8 +13,6 @@ class RoomFilter(filters.FilterSet):
 
 
 class UnbookedFilter(filters.FilterSet):
-    """Unbooked rooms filters class"""
-
     start = filters.DateTimeFilter(field_name="start", lookup_expr="gte")
     finish = filters.DateTimeFilter(field_name="finish", lookup_expr="lte")
 
