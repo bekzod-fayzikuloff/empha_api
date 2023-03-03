@@ -1,22 +1,10 @@
-from drf_spectacular.utils import extend_schema
-from rest_framework.decorators import api_view
-from rest_framework.request import Request
-from rest_framework.response import Response
+from django.contrib.auth.models import User
+from rest_framework import mixins
+from rest_framework.viewsets import GenericViewSet
 
 from .serializers import RegisterSerializer
 
 
-@extend_schema(
-    request=RegisterSerializer,
-    responses=RegisterSerializer,
-    description="New user register endpoint.",
-)
-@api_view(http_method_names=["POST"])
-def register_view(request: Request) -> Response:
-    """
-    New user register endpoint handling view.
-    """
-    serializer = RegisterSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return Response(serializer.data)
+class RegisterViewSet(mixins.CreateModelMixin, GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
