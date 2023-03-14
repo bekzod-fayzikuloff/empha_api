@@ -1,6 +1,7 @@
 from django.db.models import Q, QuerySet
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import mixins, viewsets
+from rest_framework import filters, mixins, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.request import Request
@@ -19,23 +20,8 @@ class RoomViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = RoomSerializer
     filterset_class = RoomFilter
     permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self) -> QuerySet:
-        queryset = super().get_queryset()
-        order = self.request.query_params.get("orderBy")
-        if order is not None:
-            match order:
-                case "count":
-                    queryset = queryset.order_by("place_count")
-                case "countDesc":
-                    queryset = queryset.order_by("-place_count")
-                case "cost":
-                    queryset = queryset.order_by("daily_cost")
-                case "costDesc":
-                    queryset = queryset.order_by("-daily_cost")
-                case _:
-                    return queryset
-        return queryset
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ["place_count", "daily_cost", "-place_count", "-daily_cost"]
 
 
 class UnbookedViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
