@@ -13,8 +13,8 @@ class RoomFilter(filters.FilterSet):
 
 
 class UnbookedFilter(filters.FilterSet):
-    start = filters.DateTimeFilter(field_name="start", lookup_expr="gte")
-    finish = filters.DateTimeFilter(field_name="finish", lookup_expr="lte")
+    start = filters.DateTimeFilter(field_name="booking__start", lookup_expr="lte", exclude=True)
+    finish = filters.DateTimeFilter(field_name="booking__finish", lookup_expr="lte", exclude=True)
 
     class Meta:
         model = Room
